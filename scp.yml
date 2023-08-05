@@ -1,0 +1,16 @@
+---
+- name: SCP
+  hosts: all
+  tasks: 
+  - name: copy from local to remote
+    copy:
+      src: ~/run.sh
+      dest: ~/
+      mode: 0777
+  - name: script initiating
+    shell: pwd
+    register: pwd
+  - debug:
+      var: pwd
+  - name: run
+    shell: cd ~ ; ./run.sh

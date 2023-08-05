@@ -1,0 +1,16 @@
+---
+- name: UNINSTALL PACKAGE
+  hosts: all
+  become: yes
+  vars_prompt:
+    - name:  PACKAGE
+      prompt: "ENTER YOUR PACKAGE NEED TO BE UNINSTALLED: "
+      private: no
+  tasks:
+    - name: UNINSTALL
+      yum:
+        name: '{{ PACKAGE }}'
+        state: absent
+      
+    - debug:
+        msg: '{{ PACKAGE }} SUCCESSFULLY DELETED'

@@ -1,0 +1,27 @@
+---
+- name: INSTALLING PACKAGE  
+  hosts: all
+  become:  yes
+  vars_prompt:
+    - name: PACKAGE
+      prompt: "Enter name of your package:"
+      private: no
+      
+  tasks: 
+    - name: INSTALL PACKAGE 
+      yum:
+        name: '{{ PACKAGE }}'
+        state: latest
+    
+    - name: SERVICE START
+      service: 
+        name: '{{ PACKAGE }}'
+        state: started
+        enabled: yes
+
+    - name: STATUS
+      shell: service '{{ PACKAGE }}' status
+      register: STATUS
+
+    - debug: 
+        var: STATUS

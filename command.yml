@@ -1,0 +1,11 @@
+---
+- name: cmd
+  hosts: all
+  become: yes
+  tasks:
+  - name: uptime value
+    shell: uptime ; hostname ; uname -r ; date ; yum update
+    register: uptime
+
+  - debug:
+      var: uptime
