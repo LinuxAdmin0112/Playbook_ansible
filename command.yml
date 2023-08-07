@@ -4,8 +4,28 @@
   become: yes
   tasks:
   - name: uptime value
-    shell: uptime ; hostname ; uname -r ; date ; yum update
+    shell: uptime 
     register: uptime
+    tags: tag1
 
   - debug:
       var: uptime
+    tags: tag1
+
+  - name: present directory
+    shell: pwd
+    register: pwd
+    tags: tag2
+
+  - debug:
+      var: pwd
+    tags: tag2
+
+  - name: os details
+    shell: uname
+    register: uname
+    tags: tag3
+
+  - debug:
+      var: uname
+    tags: tag3

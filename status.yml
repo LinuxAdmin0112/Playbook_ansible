@@ -11,7 +11,7 @@
     - name: Status
       shell: service '{{ Service }}' status
       register: Status
-
+    
     - debug:
         var: Status
         
