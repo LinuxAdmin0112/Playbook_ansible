@@ -1,0 +1,39 @@
+---
+- name: user creation
+  hosts: all
+  become: yes
+  vars_prompt:
+    - name: Username
+      prompt: Username
+      private: no
+    - name: UID    
+      prompt: UID (like 1234)
+      private: no
+    - name: Home_dir
+      prompt: Home directory (like /home/dir_name)
+      private: no
+    - name: shell
+      prompt: shell type (like /bin/bash)
+      private: no
+    - name: Hint
+      prompt: Purpose of user (Comment)
+      private: no
+    - name: password
+      prompt: Enter your password
+      private: no
+
+
+  tasks:
+    - name: creating_user   
+      user:
+        name: '{{ Username}}'
+        uid: '{{ UID }}'
+        home: '{{ Home_dir }}'
+        shell: '{{ shell }}'
+        comment: '{{ Hint }}'
+        password_lock: false
+        password: "{{ password | password_hash ('sha512')}}"
+      register: User_creation
+
+    - debug: 
+        var: User_creation

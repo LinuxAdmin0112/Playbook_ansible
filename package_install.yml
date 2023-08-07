@@ -2,6 +2,7 @@
 - name: INSTALLING PACKAGE  
   hosts: all
   become:  yes
+  ignore_errors: yes
   vars_prompt:
     - name: PACKAGE
       prompt: "Enter name of your package:"
@@ -12,16 +13,38 @@
       yum:
         name: '{{ PACKAGE }}'
         state: latest
-    
+      tags: install
+
     - name: SERVICE START
       service: 
         name: '{{ PACKAGE }}'
         state: started
         enabled: yes
+      tags: service_start
+
+    - name: SERVICE_STOP
+      service:
+        name: '{{ PACKAGE }}'
+        state: stopped
+        enabled: no 
+      tags: service_stop
+
+    - name: SERVICE RESTART
+      service:
+        name: '{{ PACKAGE }}'
+        state: reloaded
+        enabled: yes
+      tags: service_restart
 
     - name: STATUS
       shell: service '{{ PACKAGE }}' status
       register: STATUS
-
+      tags: status
     - debug: 
         var: STATUS
+      tags: status
+
+    - debug:
+        msg: "'{{ PACKAGE }}' is stopped"
+      when: SERVICE_STOP.failed == false
+      tags: status_failure

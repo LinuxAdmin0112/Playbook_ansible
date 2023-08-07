@@ -24,8 +24,8 @@
   - name: os details
     shell: uname
     register: uname
-    tags: tag3
+    tags: always
 
   - debug:
       var: uname
-    tags: tag3
+    tags: always
