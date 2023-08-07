@@ -1,0 +1,21 @@
+--- 
+- name: Service status
+  hosts: all
+  become: yes
+  ignore_errors: yes
+  vars_prompt:
+    - name: Service
+      prompt: Enter service name
+      private: no
+  tasks: 
+    - name: Status
+      shell: service '{{ Service }}' status
+      register: Status
+
+    - debug:
+        var: Status
+        
+    - name: Failure_Status
+      debug:
+        msg: " '{{ Service }}' service not installed"
+      when: Status.failed == true

@@ -30,11 +30,29 @@
     - debug: 
         var: STATUS
 
-    - name: DOWNLOADING WEB PACKAGE
+    - name: Package
+      when: PACKAGE ==  'httpd'
+      notify:
+        httpd
+
+    - name: Package
+      when: PACKAGE ==  'nginx'
+      notify:
+        nginx
+
+  handlers:
+    - name: httpd
       get_url:
         url: '{{ URL }}'
         dest: /var/www/html
         mode: 0755
+
+    - name: nginx
+      get_url:
+        url: '{{ URL }}'
+        dest: /usr/share/nginx/html
+        mode: 0755
+  tasks:
     - name: SERVICE START
       service:
         name: '{{ PACKAGE }}'
