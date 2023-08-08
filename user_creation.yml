@@ -6,8 +6,17 @@
     - name: Username
       prompt: Username
       private: no
+    - name: password
+      prompt: Enter your password
+      private: yes
     - name: UID    
       prompt: UID (like 1234)
+      private: no
+    - name: group
+      prompt: Enter primary group (like wheel, webgrp)
+      private: no
+    - name: Hint
+      prompt: Purpose of user (Comment)
       private: no
     - name: Home_dir
       prompt: Home directory (like /home/dir_name)
@@ -15,24 +24,19 @@
     - name: shell
       prompt: shell type (like /bin/bash)
       private: no
-    - name: Hint
-      prompt: Purpose of user (Comment)
-      private: no
-    - name: password
-      prompt: Enter your password
-      private: no
-
 
   tasks:
     - name: creating_user   
       user:
         name: '{{ Username}}'
+        password_lock: false
+        password: "{{ password | password_hash ('sha512')}}"
         uid: '{{ UID }}'
+        group: '{{ group }}'
         home: '{{ Home_dir }}'
         shell: '{{ shell }}'
         comment: '{{ Hint }}'
-        password_lock: false
-        password: "{{ password | password_hash ('sha512')}}"
+
       register: User_creation
 
     - debug: 

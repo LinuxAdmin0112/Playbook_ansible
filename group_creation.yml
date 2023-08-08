@@ -1,0 +1,21 @@
+---
+- name: GROUP_CREATION
+  hosts: all
+  become: yes
+  vars_prompt:
+    - name: Group_name
+      prompt: Enter group name
+      private: no
+    - name: GID
+      prompt: Enter group ID
+      private: no
+
+  tasks:
+    - name: Creating_group
+      group:
+        name: '{{ Group_name }}'
+        gid: '{{ GID }}' 
+      register: group
+
+    - debug:
+        var: group
