@@ -2,10 +2,10 @@
 - name: Ping
   hosts: all
   become: yes
-  vars_prompt:
-    - name: IP
-      prompt: "Enter IP"
-      private: no
   tasks:
-    - name: ping
-      shell: ping -c2 '{{ IP }}'
+    - name: ping host
+      ping:
+      register: ping
+
+    - debug: 
+        var: ping
