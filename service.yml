@@ -1,0 +1,12 @@
+---
+- name: package
+  hosts: all
+  become: yes
+  tasks:
+    - name: services
+      service_facts:
+
+      register: service
+
+    - debug:
+        var: service

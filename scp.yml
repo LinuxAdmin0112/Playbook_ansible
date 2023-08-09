@@ -1,16 +1,23 @@
 ---
 - name: SCP
   hosts: all
+  vars_prompt:
+    - name: Source_file
+      prompt: Source_file
+      private: no
+    - name: Destination
+      prompt: Destination
+      private: no
+    - name: mode
+      prompt: file_permission
+      private: no
   tasks: 
   - name: copy from local to remote
     copy:
-      src: ~/run.sh
-      dest: ~/
-      mode: 0777
-  - name: script initiating
-    shell: pwd
-    register: pwd
+      src: '{{ Source_file }}'
+      dest: '{{ Destination }}'
+      mode: '{{ mode }}'
+    register: scp
+
   - debug:
-      var: pwd
-  - name: run
-    shell: cd ~ ; ./run.sh
+      var: scp

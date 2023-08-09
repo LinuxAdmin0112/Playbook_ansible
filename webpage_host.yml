@@ -2,6 +2,7 @@
 - name: INSTALLING WEB SERVICE PACKAGE  
   hosts: all
   become:  yes
+  ignore_errors: yes
   vars_prompt:
     - name: PACKAGE
       prompt: "Enter name of your Package:"
@@ -12,52 +13,123 @@
       private: no
       
   tasks: 
-    - name: INSTALL PACKAGE 
-      yum:
-        name: '{{ PACKAGE }}'
-        state: latest
+    - name: Service status
+      systemd:
+        name: nginx
+        state: status
+      register: service_status_nginx
+      when: PACKAGE == 'httpd'
+
+    - name: Service status
+      systemd:
+        name: httpd
+        state: status
+      register: service_status_httpd
+      when: PACKAGE == 'nginx'
+
+    - name: httpd  
+      block:
+        - name: INSTALL PACKAGE 
+          yum:
+            name: '{{ PACKAGE }}'
+            state: latest
     
-    - name: SERVICE START
-      service: 
-        name: '{{ PACKAGE }}'
-        state: started
-        enabled: yes
+        - name: SERVICE START
+          service: 
+            name: '{{ PACKAGE }}'
+            state: started
+            enabled: yes
+          when: "PACKAGE == 'httpd' and service_status_nginx.failed == true"
 
-    - name: STATUS
-      shell: service '{{ PACKAGE }}' status
-      register: STATUS
+        - name: STATUS
+          shell: service '{{ PACKAGE }}' status
+          register: STATUS
+          when: "PACKAGE == 'httpd' and service_status_nginx.failed == true"
 
-    - debug: 
-        var: STATUS
+        - name: Old files deletion
+          shell: rm -rf /var/www/html/*
+          when: "PACKAGE == 'httpd' and service_status_nginx.failed == true"
 
-    - name: Package
-      when: PACKAGE ==  'httpd'
-      notify:
-        httpd
+        - name: Unarchive
+          unarchive:
+            src: '{{ URL }}'
+            dest: /var/www/html/
+            remote_src: yes
+          when: "PACKAGE == 'httpd' and service_status_nginx.failed == true"
 
-    - name: Package
-      when: PACKAGE ==  'nginx'
-      notify:
-        nginx
+        - name: copy
+          shell:  cp -r /var/www/html/*/* /var/www/html/
+          when: "PACKAGE == 'httpd' and service_status_nginx.failed == true"
 
-  handlers:
-    - name: httpd
-      get_url:
-        url: '{{ URL }}'
-        dest: /var/www/html
-        mode: 0755
+        - debug: 
+            var: STATUS
+          when: "PACKAGE == 'httpd' and service_status_nginx.failed == true"
+
+        - name: SERVICE START
+          service:
+            name: '{{ PACKAGE }}'
+            state: reloaded
+            enabled: yes
+          when: "PACKAGE == 'httpd' and service_status_nginx.failed == true"
+
+        - name: STATUS
+          shell: service '{{ PACKAGE }}' status
+          register: STATUS
+          when: "PACKAGE == 'httpd' and service_status_nginx.failed == true"
+
+          
 
     - name: nginx
-      get_url:
-        url: '{{ URL }}'
-        dest: /usr/share/nginx/html
-        mode: 0755
-  tasks:
-    - name: SERVICE START
-      service:
-        name: '{{ PACKAGE }}'
-        state: reloaded
+      block:
+        - name: INSTALL PACKAGE
+          yum:
+            name: '{{ PACKAGE }}'
+            state: latest
+          when: "PACKAGE == 'nginx' and service_status_httpd.failed == true"
 
+        - name: SERVICE START
+          service:
+            name: '{{ PACKAGE }}'
+            state: started
+            enabled: yes
+          when: "PACKAGE == 'nginx' and service_status_httpd.failed == true"
+
+        - name: STATUS
+          shell: service '{{ PACKAGE }}' status
+          register: STATUS
+          when: "PACKAGE == 'nginx' and service_status_httpd.failed == true"
+
+        - name: Old files deletion
+          shell: rm -rf /usr/share/nginx/html/*
+          when: "PACKAGE == 'nginx' and service_status_httpd.failed == true"
+
+        - name: Unarchive
+          unarchive:
+            src: '{{ URL }}'
+            dest: /usr/share/nginx/html/
+            remote_src: yes
+          when: "PACKAGE == 'nginx' and service_status_httpd.failed == true"
+
+        - name: copy
+          shell:  cp -r /usr/share/nginx/html/*/* /usr/share/nginx/html/
+          when: "PACKAGE == 'nginx' and service_status_httpd.failed == true"
+
+        - debug:
+            var: STATUS
+          when: "PACKAGE == 'nginx' and service_status_httpd.failed == true"
+
+        - name: SERVICE START
+          service:
+            name: '{{ PACKAGE }}'
+            state: reloaded
+            enabled: yes
+          when: "PACKAGE == 'nginx' and service_status_httpd.failed == true"
+
+        - name: STATUS
+          shell: service '{{ PACKAGE }}' status
+          register: STATUS
+          when: "PACKAGE == 'nginx' and service_status_httpd.failed == true"
 
           # - name: UNZIP THE FILE
-      #     shell: unzip /var/www/html/*zip -d /var/www/html/
+      #     shell
+      #     : unzip /var/www/html/*zip -d /var/www/html/

@@ -1,0 +1,56 @@
+---
+ - name: Creating_file_and_directory
+   hosts: all
+   become: yes
+#### Directory prompt
+   vars_prompt:
+     - name: dir_path
+       prompt: Enter absolute Path of directory
+       private: no
+     - name: dir_owner
+       prompt: Enter directory user owner
+       private: no
+     - name: dir_group
+       prompt: Enter directory group owner
+       private: no
+     - name: dir_mode
+       prompt: Enter dir permission
+       private: no
+     
+
+#### File prompt         
+     - name: file_path
+       prompt: Enter absolute Path of file
+       private: no
+     - name: file_owner
+       prompt: Enter file user owner
+       private: no
+     - name: file_group
+       prompt: Enter file group owner
+       private: no
+     - name: file_mode
+       prompt: Enter file_permission
+       private: no
+
+   tasks:
+     - name: creating_directory
+       file:
+         path: '{{ dir_path }}'
+         owner: '{{ dir_owner }}'
+         group: '{{ dir_group }}'
+         state: directory
+         mode: '{{ dir_mode }}'
+       register: dir
+     - name: creating_file
+       file:
+         path: '{{ file_path }}'
+         owner: '{{ file_owner }}'
+         group: '{{ file_group }}'
+         state: touch
+         mode: '{{ file_mode }}'
+       register: file
+
+     - debug:
+         var: dir
+     - debug:
+         var: file

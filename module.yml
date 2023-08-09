@@ -1,0 +1,45 @@
+---
+- name: package
+  hosts: all
+  become: yes
+  vars_prompt:
+    - name: package
+      prompt: package name
+      private: no
+  tasks:
+    - name: services
+      ignore_errors: yes
+      systemd:
+        name: nginx
+        state: restarted
+      register: service_status_nginx
+      when: package == 'httpd' 
+    - name: services
+      ignore_errors: yes
+      systemd:
+        name: httpd
+        state: restarted
+      register: service_status_httpd
+      when: package == 'nginx'
+
+    - name: httpd
+      block:
+        - name: httpd
+          shell: echo "httpd"
+          register: output
+          when: "package == 'httpd' and service_status_nginx.failed == true"
+        - debug:
+            var: output
+          when: "package == 'httpd' and service_status_nginx.failed == true"
+
+    - name: Nginx
+      block:
+        - name: nginx
+          shell: echo "nginx"
+          register: output
+          when: "package == 'nginx' and service_status_httpd.failed == true"
+        - debug:
+            var: output
+          when: "package == 'nginx' and service_status_httpd.failed == true"
+
+

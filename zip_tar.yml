@@ -1,0 +1,25 @@
+---
+- name: FILE_ZIPPING
+  hosts: all
+  vars_prompt:
+    - name: path
+      prompt: Enter path of file
+      private: no
+    - name: dest
+      prompt: Enter destination file path
+      private: no
+    - name: format
+      prompt: Enter file compression type
+      private: no
+
+  tasks:
+    - name: compress
+      become: yes
+      archive:
+        path: '{{ path }}'
+        dest: '{{ dest }}'
+        format: '{{ format }}'
+      register: file
+        
+    - debug:
+        var: file
