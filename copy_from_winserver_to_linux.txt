@@ -1,0 +1,3 @@
+"c:\Program Files\PuTTY\pscp.exe" c:\Users\Administrator\Documents\windows_linux_winrm.txt ec2-user@13.54.182.107:/home/ec2-user
+ec2-user@13.54.182.107's password:
+windows_linux_winrm.txt   | 3 kB |   3.6 kB/s | ETA: 00:00:00 | 100%

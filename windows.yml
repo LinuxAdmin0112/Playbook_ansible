@@ -1,0 +1,8 @@
+---
+- name: windows_ping
+  hosts: win
+  become: false
+  gather_facts: false
+  tasks:
+    - name: test
+      ansible.windows.win_ping:

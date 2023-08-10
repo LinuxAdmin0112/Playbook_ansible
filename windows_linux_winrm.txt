@@ -1,0 +1,81 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Users\Administrator> Enable-PSRemoting -Force
+PS C:\Users\Administrator> Set-Service WinRM -StartupType 'Automatic'
+PS C:\Users\Administrator> Set-Item -Path WSMan:\localhost\Service\Auth\Certificate -Value $true
+PS C:\Users\Administrator> Set-Item -Path 'WSMan:\localhost\Service\AllowUnencrypted' -Value $true
+PS C:\Users\Administrator> Set-Item -Path 'WSMan:\localhost\Service\Auth\Basic' -Value $true
+PS C:\Users\Administrator> Set-Item -Path 'WSMan:\localhost\Service\Auth\CredSSP' -Value $true
+PS C:\Users\Administrator> $cert = New-SelfSignedCertificate -DnsName $(Invoke-RestMethod -Uri http://169.254.169.254/latest/meta-data/public-hostname) -CertStoreLocation "cert:\LocalMachine\My"
+
+PS C:\Users\Administrator> winrm create winrm/config/Listener?Address=*+Transport=HTTPS "@{Hostname=`"$(Invoke-RestMethod -Uri http://169.254.169.254/latest/meta-data/public-hostname)`";CertificateThumbprint=`"$($cert.Thumbprint)`"}"
+ResourceCreated
+    Address = http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous
+    ReferenceParameters
+        ResourceURI = http://schemas.microsoft.com/wbem/wsman/1/config/listener
+        SelectorSet
+            Selector: Address = *, Transport = HTTPS
+
+PS C:\Users\Administrator> New-NetFirewallRule -DisplayName "Allow WinRM HTTPS" -Direction Inbound -LocalPort 5986 -Protocol TCP -Action Allow
+
+
+Name                  : {13d79f59-a93e-40e9-bdec-050ff8de605f}
+DisplayName           : Allow WinRM HTTPS
+Description           :
+DisplayGroup          :
+Group                 :
+Enabled               : True
+Profile               : Any
+Platform              : {}
+Direction             : Inbound
+Action                : Allow
+EdgeTraversalPolicy   : Block
+LooseSourceMapping    : False
+LocalOnlyMapping      : False
+Owner                 :
+PrimaryStatus         : OK
+Status                : The rule was parsed successfully from the store. (65536)
+EnforcementStatus     : NotApplicable
+PolicyStoreSource     : PersistentStore
+PolicyStoreSourceType : Local
+
+
+
+PS C:\Users\Administrator> Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
+PS C:\Users\Administrator> New-ItemProperty -Name LocalAccountTokenFilterPolicy -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -PropertyType DWord -Value 1 -Force
+
+
+LocalAccountTokenFilterPolicy : 1
+PSPath                        : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System
+PSParentPath                  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies
+PSChildName                   : System
+PSDrive                       : HKLM
+PSProvider                    : Microsoft.PowerShell.Core\Registry
+
+
+
+PS C:\Users\Administrator> Set-ExecutionPolicy Unrestricted -Force
+PS C:\Users\Administrator> Restart-Service WinRM
+PS C:\Users\Administrator> winrm enumerate winrm/config/Listener
+Listener
+    Address = *
+    Transport = HTTP
+    Port = 5985
+    Hostname
+    Enabled = true
+    URLPrefix = wsman
+    CertificateThumbprint
+    ListeningOn = 127.0.0.1, 172.31.16.67, ::1, fe80::2857:4a20:9c13:7039%4
+
+Listener
+    Address = *
+    Transport = HTTPS
+    Port = 5986
+    Hostname = ec2-3-27-93-58.ap-southeast-2.compute.amazonaws.com
+    Enabled = true
+    URLPrefix = wsman
+    CertificateThumbprint = 308F47B1579894EEC93A31827BB46EBE8AD2EFFB
+    ListeningOn = 127.0.0.1, 172.31.16.67, ::1, fe80::2857:4a20:9c13:7039%4
+
+PS C:\Users\Administrator>
