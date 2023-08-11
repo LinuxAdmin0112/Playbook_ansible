@@ -3,7 +3,7 @@ slave1		ansible_host=172.31.30.84
 
 
 [win]
-ec2-3-27-93-58.ap-southeast-2.compute.amazonaws.com
+172.31.16.67
 
 [win:vars]
 ansible_user=Administrator

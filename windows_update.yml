@@ -1,0 +1,29 @@
+---
+- name: windows_check
+  hosts: win
+  become: false
+  gather_facts: false
+  tasks:
+    - name: updates_available
+      win_updates:
+        state: searched
+      register: update #registering output as update
+    - debug:
+        var: update    
+    - name: count
+      set_fact:
+        available_update_count: "{{ update.updates | length }}"
+    - debug:
+        var: available_update_count
+
+          #- name: installed
+          #win_updates:
+          #state: downloaded
+          #register: install #registering output as install
+
+        #    - name: count
+        #set_fact:
+        #available_install_count: "{{ install.updates | length }}"
+        #- debug:
+      #var: available_install_count
+      #var: install
