@@ -1,0 +1,11 @@
+---
+- name: arch and unarch
+  hosts: all
+  tasks:
+    - name: Import and run archive playbook
+      import_playbook: archive.yml
+      tags: arch
+
+    - name: Import and run unarchive playbook
+      import_playbook: unarchive.yml
+      tags: unarch

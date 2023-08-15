@@ -129,7 +129,3 @@
           shell: service '{{ PACKAGE }}' status
           register: STATUS
           when: "PACKAGE == 'nginx' and service_status_httpd.failed == true"
-
-          # - name: UNZIP THE FILE
-      #     shell
-      #     : unzip /var/www/html/*zip -d /var/www/html/

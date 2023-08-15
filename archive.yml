@@ -1,0 +1,26 @@
+---
+- name: zip_tar
+  hosts: all
+  become: yes
+  vars_prompt:
+    - name: Source
+      prompt: Enter Remote Source Path
+      private: no
+    - name: Destination
+      prompt: Enter Remote Destination Path
+      private: no
+    - name: Format
+      prompt: Enter compression type
+      private: no
+
+  tasks:
+    - name: zipping
+      become: yes
+      archive:
+        path: '{{ Source }}'
+        dest: '{{ Destination }}'
+        format: '{{ Format }}'
+      register: output
+
+    - debug: 
+        var: output

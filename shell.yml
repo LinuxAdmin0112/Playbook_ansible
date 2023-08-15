@@ -1,0 +1,30 @@
+---
+- name: shell script
+  hosts: all
+  become: yes
+  vars_prompt:
+    - name: path
+      prompt: "path"
+      private: no
+
+  tasks: 
+    - name: script
+      shell:
+        "./start.sh"
+      args:
+        chdir: "/opt"
+        creates: "startup.lock"
+      register: out
+      
+    - debug:
+        var: out
+
+    - name: command
+      shell:
+        "cat passwd"
+      args:
+        chdir: '{{ path }}'
+      register: out
+
+    - debug:
+        var: out

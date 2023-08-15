@@ -1,0 +1,26 @@
+---
+- name: UNARCHIVE
+  hosts: all
+  become: yes
+  vars_prompt:
+    - name: Source
+      prompt: Enter source file path
+      private: no
+    - name: Destination
+      prompt: Enter Destination path
+      private: no
+    - name: Remote
+      prompt: Remote source (yes/no)
+      private: no
+
+  tasks:
+    - name: Unarchive
+      unarchive:
+        src: '{{ Source }}'
+        dest: '{{ Destination }}'
+        remote_src: '{{ Remote }}'
+      register: output
+
+    - debug:
+        var: output
+
