@@ -1,0 +1,32 @@
+---
+- name: git push
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Add Changes
+      shell: git add .
+      args:
+        chdir: /home/ansible_playbook/
+      register: output1
+
+    - debug:
+        var: output1
+
+    - name: Commit Changes
+      shell: git commit -m "changes"
+      args:
+        chdir: /home/ansible_playbook/
+      ignore_errors: yes
+      register: output2
+
+    - debug:
+        var: output2
+
+    - name: Push Changes
+      shell: git push -u origin master 
+      args:
+        chdir: /home/ansible_playbook/
+      register: output3
+
+    - debug:
+        var: output3
