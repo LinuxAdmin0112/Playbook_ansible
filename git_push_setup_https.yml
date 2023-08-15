@@ -6,7 +6,7 @@
     - name: Add Changes
       shell: git add .
       args:
-        chdir: /home/ansible_playbook/
+        chdir: /home/Playbook_ansible/
       register: output1
 
     - debug:
@@ -15,7 +15,7 @@
     - name: Commit Changes
       shell: git commit -m "changes"
       args:
-        chdir: /home/ansible_playbook/
+        chdir: /home/Playbook_ansible/
       ignore_errors: yes
       register: output2
 
@@ -25,7 +25,7 @@
     - name: Push Changes
       shell: git push -u origin master 
       args:
-        chdir: /home/ansible_playbook/
+        chdir: /home/Playbook_ansible/
       register: output3
 
     - debug:
