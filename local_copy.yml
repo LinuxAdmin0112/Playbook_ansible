@@ -1,0 +1,14 @@
+---
+- name: copy from local to local
+  hosts: all
+  become: yes
+  connection: local
+  tasks:
+    - name: local to local
+      copy:
+        src: /opt/file.txt
+        dest: /tmp/files.txt
+      register: copy
+
+    - debug:
+        var: copy

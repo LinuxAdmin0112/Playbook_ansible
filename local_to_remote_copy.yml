@@ -1,0 +1,13 @@
+---
+- name: copy from local to remote
+  hosts: all
+  become: yes
+  tasks:
+    - name: local to remote
+      copy:
+        src: /opt/file.txt
+        dest: /tmp/files1.txt
+      register: copy
+
+    - debug:
+        var: copy

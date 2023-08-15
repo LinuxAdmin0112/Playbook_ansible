@@ -1,0 +1,15 @@
+---
+- name: copy inside remote server
+  hosts: all
+  become: yes
+  tasks:
+    - name: copy inside remote server
+      copy:
+        src: /opt/file.txt
+        dest: /tmp/files_nkp.txt
+        remote_src: yes
+        backup: yes
+      register: copy
+
+    - debug:
+        var: copy

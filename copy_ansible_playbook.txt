@@ -1,0 +1,66 @@
+# copy from local to local
+
+---
+- name: copy from local to local
+  hosts: all
+  become: yes
+  connection: local 			# use: copy and paste inside local server
+  tasks:
+    - name: local to local
+      copy:
+        src: /opt/file.txt
+        dest: /tmp/files.txt
+      register: copy
+
+    - debug:
+        var: copy
+
+
+# copy from local to remote
+
+---
+- name: copy from local to remote
+  hosts: all
+  become: yes
+  tasks:
+    - name: copy from local to remote
+      copy:
+        src: /opt/file.txt  		# local source
+        dest: /tmp/files1.txt 		# local destination
+      register: copy
+
+    - debug:
+        var: copy
+
+# copy from remote to remote
+
+---
+- name: copy inside remote server
+  hosts: all
+  become: yes
+  tasks:
+    - name: copy inside remote server
+      copy:
+        src: /opt/file.txt
+        dest: /tmp/files.txt
+        remote_src: yes 		# use: copy and paste inside remote server
+      register: copy
+
+    - debug:
+        var: copy
+
+
+
+
+
+
+# use of force options
+
+# force: no -- it disables the force copy, if file is already present
+# force: yes -- it enables the force copy, though file is already present
+
+
+
+# backup options
+		# it works in local to local copy
+# backup: yes -- it copy one backup file in destination directory
