@@ -1,0 +1,8 @@
+---
+# handlers file for httpd_nginx_host
+#
+- name: restart webservice
+  service:
+    name: '{{ webservice }}'
+    state: restarted
+    enabled: yes

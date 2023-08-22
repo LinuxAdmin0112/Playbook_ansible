@@ -1,0 +1,20 @@
+---
+- name: 
+  hosts: localhost,slave1
+  become: yes
+  tasks:
+    - name: 
+      shell: echo $(hostname -i)
+      register: item
+
+    - debug: 
+        var: item
+    - name: web page check
+      uri:
+        url: http://{{ item.stdout}}/
+        status_code: 200
+
+      register: check
+
+    - debug:
+        var: check

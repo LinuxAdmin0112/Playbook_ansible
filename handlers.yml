@@ -1,0 +1,49 @@
+# handlers used to run the play when the changes happens
+#
+#
+---
+- name: handlers
+  hosts: localhost
+  become: yes
+  tasks: 
+    - name: installing httpd
+      yum:
+        name: httpd
+        state: latest
+
+    - name: service start
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+      notify:
+        - service_started  # it notifies handler module
+    
+
+
+# flush  handlers is used to notify the handlers till above step and execute it or else the handlers will execute at the end of play
+# To see the difference in flush handlers usage, comment below 2 lines
+ 
+    - name: flush_handlers 
+      meta: flush_handlers # it is used to notify the handlers till above step and execute it.
+
+    - name: service stop
+      service:
+        name: httpd
+        state: stopped
+
+      notify:
+        - service_stopped   # it notifies handler module
+
+  handlers:
+    - name: service_started
+      debug:
+        msg: "this handlers works through name of notify and handlers name"
+
+    - name: Service stop
+      listen: service_stopped
+      debug:
+        msg: "this handlers works through name of notify and listen name"
+
+

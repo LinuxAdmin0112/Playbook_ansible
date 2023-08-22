@@ -1,6 +1,6 @@
 ---
 - name: INSTALLING PACKAGE  
-  hosts: all
+  hosts: localhost
   become:  yes
   ignore_errors: yes
   vars_prompt:

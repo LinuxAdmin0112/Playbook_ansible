@@ -1,0 +1,22 @@
+---
+- name: block and rescue
+  hosts: all
+  become: yes
+  tasks:
+    - name: block and rescue
+      block:
+        - name: suxus
+          debug:
+            msg: "play is suxus"
+
+        - name: fail
+          shell: /bin/true    # to see the difference in block and rescue module use /bin/true ----> /bin/false or viceversa
+      rescue:
+        - name: fail_debug
+          debug:
+            msg: "recuse statemetn"
+      
+      always:
+        - name: always do this task every running
+          debug: 
+            msg: "this play run everytime"

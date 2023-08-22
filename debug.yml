@@ -1,0 +1,23 @@
+---
+- name: httpd
+  hosts: localhost, all
+  become: yes
+  tasks:
+    - name: install
+      yum: 
+        name: 
+          - httpd
+          - nginx
+        state: present
+    - name: start
+      service: 
+        name: httpd
+        state: started
+      register: check
+
+    - debug:
+        msg: "'{{ check }}'.stdout"
+
+
+    - debug:
+        var: check

@@ -1,0 +1,28 @@
+---
+# tasks file for httpd_nginx_host
+#
+- name: Service interuption check
+  service:
+    name: "{{ item }}"
+    state: stopped
+  loop:
+    - "httpd.service"
+    - "nginx.service"
+  ignore_errors: yes
+
+- name: Install '{{ webservice }}'
+  yum: 
+    name: '{{ webservice }}'
+    state: present
+
+  notify: 
+    - restart webservice
+
+- name: Deleting old templates
+  import_tasks: delete.yml
+    
+- name: Downloading templates
+  import_tasks: url.yml
+
+  notify:
+    - restart webservice

@@ -1,0 +1,17 @@
+---
+- name: when_condition
+  hosts: all
+  become: yes
+  tasks:
+    - name: block
+      block: 
+        - name: check
+          stat: 
+            path: /tmp/file
+          register: check
+        - debug:
+            var: check 
+              #      rescue:
+              #     - debug:
+              #      msg: "file not found"     
+              #       when: check.changed == 'false' 

@@ -1,0 +1,11 @@
+---
+- name:
+  hosts: localhost
+  become: yes
+  vars_prompt:
+    - name: webservice
+      prompt: webservice name (httpd, nginx)
+      private: no
+
+  roles:
+    - httpd_nginx_host

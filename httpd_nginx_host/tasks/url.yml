@@ -1,0 +1,14 @@
+---
+- name: Download template
+  unarchive:
+    src: '{{ URL }}'
+    dest: '{{ httpd_path }}'  
+    remote_src: yes
+  when: "webservice == 'httpd'"
+
+- name: Download template
+  unarchive:
+    src: '{{ URL }}'
+    dest: '{{ nginx_path }}'
+    remote_src: yes
+  when: "webservice == 'nginx'"

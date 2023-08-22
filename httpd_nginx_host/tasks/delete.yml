@@ -1,0 +1,14 @@
+- name: deleting old templates
+  shell: ls '{{ httpd_path }}'
+  register: files
+ 
+- debug:
+    var: files 
+- name:    
+  file:
+    path: '{{ files.stdout_lines }}'
+    state: absent
+  register: delete
+
+- debug:
+    var: delete

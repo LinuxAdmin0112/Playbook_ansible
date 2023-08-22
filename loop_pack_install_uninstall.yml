@@ -1,0 +1,32 @@
+---
+- name:
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: install httpd
+      yum:
+        name: httpd
+        state: latest
+
+    - name: service start, stop, restart      
+      service: 
+        name: httpd
+        state: '{{ item.state }}'
+        enabled: '{{ item.enabled }}'
+      loop:
+        - { state: started, enabled: yes}
+        - { state: stopped, enabled: no}
+        - { state: reloaded, enabled: yes}
+
+    - name: status
+      shell: service httpd status
+      register: status
+
+    - debug:
+        var: status
+
+    - name: uninstall httpd
+      yum:
+        name: httpd
+        state: absent
+

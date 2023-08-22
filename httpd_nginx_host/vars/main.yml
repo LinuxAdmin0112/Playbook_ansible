@@ -1,0 +1,5 @@
+---
+# vars file for httpd_nginx_host
+#
+httpd_path: /var/www/html
+nginx_path: /usr/share/nginx/html
