@@ -1,0 +1,63 @@
+---
+- name: ping
+  hosts: all
+  vars_prompt:
+    - name: package 
+      prompt: Enter package name 
+      private: false 
+    
+    - name: want
+      prompt: Want to install/remove?
+      private: false
+
+  tasks:
+    - name: Install {{ package }} 
+      yum: 
+        name: '{{ package }}'
+        state: present
+      when: want == 'install'
+      register: present_status
+
+    - name: Remove {{ package }}
+      yum:
+        name: '{{ package }}'
+        state: absent
+      when: want == 'remove'
+      register: absent_status
+
+    - name: Status
+      debug:  
+        msg: "Successfully installed" 
+      when: present_status.changed == true 
+
+    - name: Status
+      debug:  
+        msg: "Already installed" 
+      when: present_status.changed == false and want == 'install' 
+
+    - name: Status
+      debug:  
+        msg: "Successfully removed" 
+      when: absent_status.changed == true
+
+    - name: Status
+      debug:  
+        msg: "Nothing to do" 
+      when: absent_status.changed == false and want == 'remove'
+
+    - name: service start & enable
+      service:
+        name: '{{ package }}'
+        state: started
+        enabled: yes
+      when: want == 'install'
+
+    - name: "{{ package }} service status"
+      command: systemctl status '{{ package }}' 
+      when: want == 'install'
+      register: status
+      
+    - name: "{{ package }} service status"
+      debug:
+        var: status.stdout_lines
+      when: want == 'install'
